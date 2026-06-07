@@ -114,3 +114,50 @@ public class XMLNodeTree: Codable {
 	}
 }
 
+class XMLTreeParser: XMLParser {
+	init(url: URL) {
+		if let data = try? Data(contentsOf: url) {
+			super.init(data: data)
+			self.delegate = self
+		} else {
+			super.init()
+		}
+	}
+	override init(data: Data) {
+		super.init(data: data)
+		self.delegate = self
+	}
+	
+	var nodes: [XMLNode] = [XMLNode("")]
+		
+	func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+		let node = XMLNode(elementName, namespace: namespaceURI, qName: qName, attributes: attributeDict, children: [])
+		if let parent = nodes.last {
+			parent.children.append(node)
+			nodes.append(node)
+		}
+		else {
+			nodes.append(node)
+		}
+	}
+	
+	func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+		if let _ = nodes.last {
+			nodes.removeLast()
+		}
+	}
+	
+	func parser(_ parser: XMLParser, foundCharacters string: String) {
+		nodes.last?.text = string
+	}
+	
+	func parserDidEndDocument(_ parser: XMLParser) {
+	}
+	
+	static func parse(url: URL) -> XMLNodeTree {
+		let instance = XMLTreeParser(url: url)
+		return XMLNodeTree(topNode: instance.nodes.first)
+	}
+}
+
+extension XMLTreeParser: XMLParserDelegate {}
