@@ -156,6 +156,7 @@ public class XMLTreeParser: XMLParser {
 	
 	public static func parse(url: URL) -> XMLNodeTree {
 		let instance = XMLTreeParser(url: url)
+		instance.parse()
 		return XMLNodeTree(topNode: instance.nodes.first)
 	}
 }
