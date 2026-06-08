@@ -151,7 +151,7 @@ public class XMLTreeParser: XMLParser {
 		var string = string
 		if nodes.last?.text != nil { string = "\n\(string)" }
 		let text = nodes.last?.text ?? ""
-		nodes.last?.text = text + string
+		nodes.last?.text = (text + string).trimmingCharacters(in: .whitespacesAndNewlines)
 	}
 	
 	public func parserDidEndDocument(_ parser: XMLParser) {
