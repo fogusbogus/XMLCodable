@@ -148,6 +148,8 @@ public class XMLTreeParser: XMLParser {
 	}
 	
 	public func parser(_ parser: XMLParser, foundCharacters string: String) {
+		var string = string
+		if nodes.last?.text != nil { string = "\n\(string)" }
 		let text = nodes.last?.text ?? ""
 		nodes.last?.text = text + string
 	}
